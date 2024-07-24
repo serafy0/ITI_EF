@@ -1,0 +1,6 @@
+namespace dashboard;
+
+class Utility
+{
+    
+}
