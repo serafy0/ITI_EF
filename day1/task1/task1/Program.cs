@@ -212,12 +212,115 @@ class Program
     var solution = NumberString.Where(w=>w[1]=='i').Reverse();
     printList(solution);
 
-        //LINQ - Partitioning Operators
-        //1
-        // var firstThree = cList.
-        //2
+    //LINQ - Partitioning Operators
+    //1
+    var ordersFromW = cList.Where(c=>c.Region=="WA").Select(c=>string.Join(" ||",c.Orders.Take(3)));
+    printList(ordersFromW);
+
+    // var firstThree = cList.
+    //2
+    var allbutFirstTwo =cList.Where(c=>c.Region=="WA").Select(c=>string.Join(" ||",c.Orders.Skip(2)));
+    printList(allbutFirstTwo);
+    //3
+    int[] numbers = { 5, 4, 1, 3, 9, 8, 6, 7, 2, 0 };
+    var untilNumisLess = numbers.TakeWhile((n,i)=>n>=i);
+    printList(untilNumisLess);
+
+    //4
+    var startingByD3= numbers.SkipWhile(n=>n%3!=0);
+    printList(startingByD3);
+    //5
+    var startingFromLess = numbers.SkipWhile((n,i)=>n>=i);
+    printList(startingFromLess);
 
 
+    //LINQ - Projection Operators
+    //1
+    var justTheNames = pList.Select(p=>p.ProductName);
+    printList(justTheNames);
+    //2
+    string[] newWords = { "aPPLE", "BlUeBeRrY", "cHeRry" };
+    var upperAndLower = newWords.Select(w=>new{upper=w.ToUpper(),lower=w.ToLower()});
+    printList(upperAndLower);
+
+    //3
+    var someProps = pList.Select(p=>new{Price=p.UnitPrice,Name=p.ProductName});
+        printList(someProps);
+
+    //4    
+    int[] numArr = { 5, 4, 1, 3, 9, 8, 6, 7, 2, 0 };
+    var inPlace =   numArr.Select((n,i)=>{
+
+        bool isInPlace = n==i;
+        return $"{n}: {isInPlace}";
+
+    });
+    printList(inPlace);
+    int[] numbersA = { 0, 2, 4, 5, 6, 8, 9 };
+    int[] numbersB = { 1, 3, 5, 7, 8 };
+
+
+    //5
+    var r = numbersA.SelectMany(a=>numbersB.Where(b=>b>a).Select(b=>$"{a} is less than {b}"));
+
+    printList(r);
+
+    //6
+    var ordersLessThan500= cList.SelectMany(c=>c.Orders.Where(o=>o.Total<500));
+    printList(ordersLessThan500);
+
+//7
+    var orderByDate= cList.SelectMany(c=>c.Orders.Where(o=>o.OrderDate>new DateTime(1998,1,1)));
+    printList(orderByDate);
+
+
+  //LINQ - Quantifiers
+  var   containsEi = words.Any(w=>w.Contains("ie"));
+  Console.WriteLine(containsEi);
+
+  //2
+  var atleastOneOutOfStock = pList.GroupBy(p=>p.Category).Where(g=>g.Any(p=>p.UnitsInStock==0)).SelectMany(p=>p);
+       printList(atleastOneOutOfStock);
+
+//3
+  var allInStock = pList.GroupBy(p=>p.Category).Where(g=>g.All(p=>p.UnitsInStock>0)).SelectMany(p=>p);
+       printList(allInStock);
+
+//LINQ - Grouping Operators
+    int[] numbers2 = { 0, 5, 10, 1, 6, 11, 7, 2, 12, 3,8,13,4,9,14};
+    //1-->console log
+    var gByRemainder = numbers2.GroupBy(n=>n%5).OrderBy(g=>g.Key);
+           
+    //2
+    var groupByFirstLetter = words.GroupBy((w)=>{
+        foreach(char c in w){
+            if(char.IsLetter(c)){
+                return c;
+            }
+        }
+        return w[0];
+    });
+
+    printList(groupByFirstLetter.Select(g=>new {g.Key,count=g.Count()}));
+
+    //3
+    string[] ArrWords = { "from ", " salt", " earn ", " last ", " near ","form "};
+    var result = ArrWords.GroupBy((w)=>{
+        string realString="";
+        foreach(char c in w.OrderBy(c=>c)){
+            if(char.IsLetter(c)){
+                realString+=c;
+            }
+        }
+    return realString;
+    });
+
+    foreach(var g in result){
+        printList(g);
+    }
+
+    printList(result.Select(g=>new{g.Key,count=g.Count()}));
+      
     }
 
     private static void printList(IEnumerable<int> o)
